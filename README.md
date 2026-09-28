@@ -7,6 +7,7 @@ IgniteTalkPDF is a native macOS presentation app built for the Ignite format: a 
 - Built with SwiftUI and PDFKit
 - Targets macOS 13 or newer
 - Uses a five-minute presentation timeline divided equally across 1 to 20 pages
+- Shows a live countdown on each running slide
 - Validates page count before starting a presentation
 - Supports both Intel and Apple Silicon Macs via a universal binary build
 - Includes a dependency-free timing model and test coverage
@@ -21,6 +22,7 @@ graph TD
   Validate -->|Yes| Session[Start presentation]
   Session --> Timeline[PresentationTimeline]
   Timeline --> Page[Display current page]
+  Page --> Countdown[Show remaining slide time]
   Page --> Controls[Pause, resume, navigate, restart]
   Timeline --> Finish[Five-minute timer completes]
   Finish --> Logo[Show DODLogo]
@@ -39,6 +41,7 @@ graph TD
 - The app validates that it contains between 1 and 20 pages.
 - A `PresentationSession` updates the `PresentationTimeline` based on system uptime.
 - The timeline divides five minutes equally across the slides and controls pause/resume and navigation.
+- A compact countdown appears in the top-right corner during playback. The control bar is hidden while running and returns when paused, with the remaining time shown beside a clock icon.
 - The app exits fullscreen with the Escape key and can restart the presentation at any time.
 
 The last-used PDF folder is remembered in `UserDefaults`, so the chooser reopens in the same directory next time.

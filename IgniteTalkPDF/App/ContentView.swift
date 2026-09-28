@@ -175,12 +175,22 @@ private struct PresentationView: View {
 
             PDFPageView(document: document, pageIndex: session.currentPage)
                 .ignoresSafeArea()
+                .overlay(alignment: .topTrailing) {
+                    if session.phase == .running {
+                        countdown
+                            .padding(.top, 24)
+                            .padding(.trailing, 24)
+                            .allowsHitTesting(false)
+                    }
+                }
 
             completionOverlay
 
-            controls
-                .padding(.horizontal, 24)
-                .padding(.bottom, 20)
+            if session.phase != .running {
+                controls
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 20)
+            }
         }
         .onReceive(timer) { _ in
             session.tick()
@@ -242,6 +252,8 @@ private struct PresentationView: View {
         HStack(spacing: 14) {
             Text("\(session.timeline.pageNumber) / \(session.timeline.pageCount)")
                 .monospacedDigit()
+            Image(systemName: "clock")
+                .font(.caption.weight(.semibold))
             Text(statusTime)
                 .monospacedDigit()
                 .frame(width: 34, alignment: .trailing)
@@ -252,6 +264,20 @@ private struct PresentationView: View {
 
     private var statusTime: String {
         return "\(Int(ceil(session.secondsRemaining)))s"
+    }
+
+    private var countdown: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "clock")
+                .font(.caption.weight(.semibold))
+            Text(statusTime)
+                .font(.system(.caption, design: .monospaced).weight(.semibold))
+                .monospacedDigit()
+        }
+        .foregroundStyle(.white)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 7)
+        .background(.ultraThinMaterial, in: Capsule())
     }
 
     private func controlButton(_ title: String, systemImage: String, action: @escaping () -> Void) -> some View {
